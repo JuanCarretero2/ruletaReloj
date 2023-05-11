@@ -1,6 +1,7 @@
-var options = [
-    "Math", "Natural Science", "Literature", "Music", "Entertainment", "Social Science", "Technology", "Arts and Crafts", "Physical Education"
-];
+//CUSTOM "Roulette Wheel" BY jexus fox
+//https://codepen.io/jexusfox/pen/WgNpzN
+
+var options = ["Math", "Natural Science", "Literature", "Music", "Entertainment", "Social Science", "Technology", "Arts and Crafts", "Physical Education"];
 
 var startAngle = 0;
 var arc = Math.PI / (options.length / 2);
