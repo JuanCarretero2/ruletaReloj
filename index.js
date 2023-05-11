@@ -1,206 +1,132 @@
-var data = [
-    //{ id: '', color: '#3f297e', text: 'ALL IN', ikon: 'invert_colors' },
-
-    //ALDRO AQUI PUEDES MODIFICAR LOS PREMIOS. En el apartado text colocar el premio de cada sección. Si necesitas modificar la velocidad hay un atributo llamado duration más adelante que puedes modificar también.
-
-    //Modificar Premio Tequila QP
-    { id: '', type: 'allin', color: '#1b87e6', text: 'Tequila QP', ikon: '' },
-    // Modificar Premio Beats
-    { id: '', type: 'quiz', color: '#1b3380', text: 'Beats' },
-    // Modificar Premio Airpods
-    { id: '', type: 'quiz', color: '#1b87e6', text: 'Airpods' },
-    // Modificar Premio Tarjeta
-    { id: '', type: 'quiz', color: '#1b3380', text: 'Tarjeta' },
-    // Modificar Premio Beats - 2
-    { id: '', color: '#1b87e6', text: 'Beats QP', ikon: '' },
-    // Modificar Premio Airpods - 2
-    { id: '', color: '#1b3380', text: 'Airpods' },
-    // Modificar Premio Tequila QP - 2
-    { id: '', color: '#1b87e6', text: 'Tequila QP' },
-    // Modificar Premio Dashboard
-    { id: '', type: 'time', color: '#1b3380', text: 'Dashboard', ikon: '' },
-    // Modificar premio Netflix
-    { id: '', type: 'question', color: '#1b87e6', text: 'Netflix' },
-    // Modificar premio Cine QP
-    { id: '', color: '#1b3380', text: 'Cine QP' },
-    // Modificar premio Airpods - 2
-    { id: '', color: '#1b87e6', text: 'Airpods' },
-    // Modificar premio Jugar de nuevo
-    { id: '', type: 'replay', color: '#1b3380', text: 'Jugar de nuevo', ikon: 'replay' }
+var options = [
+    "Math", "Natural Science", "Literature", "Music", "Entertainment", "Social Science", "Technology", "Arts and Crafts", "Physical Education"
 ];
 
-var RouletteWheel = function(el, items){
-    this.$el = $(el);
-    this.items = items || [];
-    this._bis = false;
-    this._angle = 0;
-    this._index = 0;
-    this.options = {
-        angleOffset: -90
+var startAngle = 0;
+var arc = Math.PI / (options.length / 2);
+var spinTimeout = null;
+
+var spinArcStart = 10;
+var spinTime = 0;
+var spinTimeTotal = 0;
+
+var ctx;
+
+document.getElementById("spin").addEventListener("click", spin);
+
+function byte2Hex(n) {
+    var nybHexString = "0123456789ABCDEF";
+    return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
+}
+
+function RGB2Color(r,g,b) {
+    return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
+}
+
+function getColor(item, maxitem) {
+    var phase = 0;
+    var center = 128;
+    var width = 127;
+    var frequency = Math.PI*2/maxitem;
+
+    red   = Math.sin(frequency*item+2+phase) * width + center;
+    green = Math.sin(frequency*item+0+phase) * width + center;
+    blue  = Math.sin(frequency*item+4+phase) * width + center;
+
+    return RGB2Color(red,green,blue);
+}
+
+function drawRouletteWheel() {
+    var canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        var outsideRadius = 200;
+        var textRadius = 160;
+        //circulo central
+        var insideRadius = 100;
+
+        ctx = canvas.getContext("2d");
+        ctx.clearRect(0,0,500,500);
+
+        ctx.strokeStyle = "grey";
+        ctx.lineWidth = 1;
+
+        ctx.font = 'bold 12px Helvetica, Arial';
+
+        for(var i = 0; i < options.length; i++) {
+            var angle = startAngle + i * arc;
+            //ctx.fillStyle = colors[i];
+            ctx.fillStyle = getColor(i, options.length);
+
+            ctx.beginPath();
+            ctx.arc(250, 250, outsideRadius, angle, angle + arc, false);
+            ctx.arc(250, 250, insideRadius, angle + arc, angle, true);
+            ctx.stroke();
+            ctx.fill();
+
+            ctx.save();
+            ctx.shadowOffsetX = -1;
+            ctx.shadowOffsetY = -1;
+            ctx.shadowBlur    = 15;
+            ctx.shadowColor   = "rgba(0,0,0,0.9)";
+            ctx.fillStyle = "white";
+            ctx.translate(250 + Math.cos(angle + arc / 2) * textRadius,
+                250 + Math.sin(angle + arc / 2) * textRadius);
+            ctx.rotate(angle + arc / 2 + Math.PI / 2);
+            var text = options[i];
+            ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+            ctx.restore();
+        }
+
+        //Arrow
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(250 - 4, 250 - (outsideRadius + 5));
+        ctx.lineTo(250 + 4, 250 - (outsideRadius + 5));
+        ctx.lineTo(250 + 4, 250 - (outsideRadius - 5));
+        ctx.lineTo(250 + 9, 250 - (outsideRadius - 5));
+        ctx.lineTo(250 + 0, 250 - (outsideRadius - 13));
+        ctx.lineTo(250 - 9, 250 - (outsideRadius - 5));
+        ctx.lineTo(250 - 4, 250 - (outsideRadius - 5));
+        ctx.lineTo(250 - 4, 250 - (outsideRadius + 5));
+        ctx.fill();
     }
 }
 
-_.extend(RouletteWheel.prototype, Backbone.Events);
+function spin() {
+    spinAngleStart = Math.random() * 10 + 10;
+    spinTime = 0;
+    spinTimeTotal = Math.random() * 3 + 4 * 1000;
+    rotateWheel();
+}
 
-RouletteWheel.prototype.spin = function(_index){
-
-    var count = this.items.length;
-    var delta = 360/count;
-    var index = !isNaN(parseInt(_index))? parseInt(_index) : parseInt(Math.random()*count);
-
-    var a = index * delta + ((this._bis)? 1440 : -1440);
-
-    //a+=this.options.angleOffset;
-
-    this._bis = !this._bis;
-    this._angle = a;
-    this._index = index;
-
-    var $spinner = $(this.$el.find('.spinner'));
-
-    var _onAnimationBegin = function(){
-        this.$el.addClass('busy');
-        this.trigger('spin:start',this);
+function rotateWheel() {
+    spinTime += 30;
+    if(spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
     }
-
-    var _onAnimationComplete = function(){
-        this.$el.removeClass('busy');
-        this.trigger('spin:end',this);
-    }
-
-    $spinner
-        .velocity('stop')
-        .velocity({
-            rotateZ: a +'deg'
-        },{
-            //easing: [20, 7],
-            //easing: [200, 20],
-            easing: 'easeOutQuint',
-            duration: 15000,
-            begin: $.proxy(_onAnimationBegin,this),
-            complete: $.proxy(_onAnimationComplete,this)
-        });
-
+    var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+    startAngle += (spinAngle * Math.PI / 180);
+    drawRouletteWheel();
+    spinTimeout = setTimeout('rotateWheel()', 30);
 }
 
-RouletteWheel.prototype.render = function(){
-
-    var $spinner = $(this.$el.find('.spinner'));
-    var D = this.$el.width();
-    var R = D*.5;
-
-    var count = this.items.length;
-    var delta = 360/count;
-
-    for(var i=0; i<count; i++){
-
-        var item = this.items[i];
-
-        var color = item.color;
-        var text = item.text;
-        var ikon = item.ikon;
-
-        var html = [];
-        html.push('<div class="item" ');
-        html.push('data-index="'+i+'" ');
-        html.push('data-type="'+item.type+'" ');
-        html.push('>');
-        html.push('<span class="label">');
-        if(ikon)
-            html.push('<i class="material-icons">'+ikon+'</i>');
-        html.push('<span class="text">'+text+'</span>');
-        html.push('</span>');
-        html.push('</div>');
-
-        var $item = $(html.join(''));
-
-        var borderTopWidth = D + D*0.0025; //0.0025 extra :D
-        var deltaInRadians = delta * Math.PI / 180;
-        var borderRightWidth = D / ( 1/Math.tan(deltaInRadians) );
-
-        var r = delta*(count-i) + this.options.angleOffset - delta*.5;
-
-        $item.css({
-            borderTopWidth: borderTopWidth,
-            borderRightWidth: borderRightWidth,
-            transform: 'scale(2) rotate('+ r +'deg)',
-            borderTopColor: color
-        });
-
-        var textHeight = parseInt(((2*Math.PI*R)/count)*.5);
-
-        $item.find('.label').css({
-            //transform: 'translateX('+ (textHeight) +'px) translateY('+  (-1 * R) +'px) rotateZ('+ (90 + delta*.5) +'deg)',
-            transform: 'translateY('+ (D*-.25) +'px) translateX('+  (textHeight*1.03) +'px) rotateZ('+ (90 + delta*.5) +'deg)',
-            height: textHeight+'px',
-            lineHeight: textHeight+'px',
-            textIndent: (R*.1)+'px'
-        });
-
-        $spinner.append($item);
-
-    }
-
-    $spinner.css({
-        fontSize: parseInt(R*0.06)+'px'
-    })
-
-    //this.renderMarker();
-
-
+function stopRotateWheel() {
+    clearTimeout(spinTimeout);
+    var degrees = startAngle * 180 / Math.PI + 90;
+    var arcd = arc * 180 / Math.PI;
+    var index = Math.floor((360 - degrees % 360) / arcd);
+    ctx.save();
+    ctx.font = 'bold 30px Helvetica, Arial';
+    var text = options[index]
+    ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
+    ctx.restore();
 }
 
-RouletteWheel.prototype.renderMarker = function(){
-
-    var $markers = $(this.$el.find('.markers'));
-    var D = this.$el.width();
-    var R = D*.5;
-
-    var count = this.items.length;
-    var delta = 360/count;
-
-    var borderTopWidth = D + D*0.0025; //0.0025 extra :D
-    var deltaInRadians = delta * Math.PI / 180;
-    var borderRightWidth = (D / ( 1/Math.tan(deltaInRadians) ));
-
-    var i = 0;
-    var $markerA = $('<div class="marker">');
-    var $markerB = $('<div class="marker">');
-
-    var rA = delta*(count-i-1) - delta*.5 + this.options.angleOffset;
-    var rB = delta*(count-i+1) - delta*.5 + this.options.angleOffset;
-
-    $markerA.css({
-        borderTopWidth: borderTopWidth,
-        borderRightWidth: borderRightWidth,
-        transform: 'scale(2) rotate('+ rA +'deg)',
-        borderTopColor: '#FFF'
-    });
-    $markerB.css({
-        borderTopWidth: borderTopWidth,
-        borderRightWidth: borderRightWidth,
-        transform: 'scale(2) rotate('+ rB +'deg)',
-        borderTopColor: '#FFF'
-    })
-
-    $markers.append($markerA);
-    $markers.append($markerB);
-
+function easeOut(t, b, c, d) {
+    var ts = (t/=d)*t;
+    var tc = ts*t;
+    return b+c*(tc + -3*ts + 3*t);
 }
 
-RouletteWheel.prototype.bindEvents = function(){
-    this.$el.find('.button').on('click', $.proxy(this.spin,this));
-}
-
-
-var spinner;
-$(window).ready(function(){
-
-    spinner = new RouletteWheel($('.roulette'), data);
-    spinner.render();
-    spinner.bindEvents();
-
-    spinner.on('spin:start', function(r){ console.log('spin start!') });
-    spinner.on('spin:end', function(r){ console.log('spin end! -->'+ r._index) });
-
-})
+drawRouletteWheel();
