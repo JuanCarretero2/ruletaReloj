@@ -1,7 +1,38 @@
 //CUSTOM "Roulette Wheel" BY jexus fox
 //https://codepen.io/jexusfox/pen/WgNpzN
 
-var options = ["Math", "Natural Science", "Literature", "Music", "Entertainment", "Social Science", "Technology", "Arts and Crafts", "Physical Education"];
+var options = [
+    "juan.acosta.7e6@itb.cat",
+    "mauro.arena.7e6@itb.cat",
+    "onur.aynali.7e6@itb.cat",
+    "oriol.barba.7e6@itb.cat",
+    "ruben.blas.7e6@itb.cat",
+    "juan.canyas.7e6@itb.cat",
+    "gerard.cano.7e6@itb.cat",
+    "juan.carretero.7e6@itb.cat",
+    "claudia.catot.7e6@itb.cat",
+    "samir.channagui.7e6@itb.cat",
+    "gerardo.chavarry.7e6@itb.cat",
+    "pablo.chmyr.7e6@itb.cat",
+    "younes.derraz.7e6@itb.cat",
+    "soulaimane.elharrak.7e6@itb.cat",
+    "hector.escribano.7e6@itb.cat",
+    "joel.fernandez.7e6@itb.cat",
+    "mario.garcia.7e6@itb.cat",
+    "jefrey.hernandez.7e6@itb.cat",
+    "kevin.herrera.7e6@itb.cat",
+    "denis.jimenez.7e6@itb.cat",
+    "erin.lorenzo.7e6@itb.cat",
+    "david.martinez.7e6@itb.cat",
+    "isaac.menendez.7e6@itb.cat",
+    "trishan.mizhquiri.7e6@itb.cat",
+    "victor.sempau.7e6@itb.cat",
+    "alfredo.sendra.7e3@itb.cat",
+    "daniel.shapoval.7e6@itb.cat",
+    "bogdan.stefurak.7e6@itb.cat",
+    "enric.toll.7e6@itb.cat",
+    "joan.villalba.7e6@itb.cat"
+];
 
 var startAngle = 0;
 var arc = Math.PI / (options.length / 2);
@@ -40,10 +71,10 @@ function getColor(item, maxitem) {
 function drawRouletteWheel() {
     var canvas = document.getElementById("canvas");
     if (canvas.getContext) {
-        var outsideRadius = 200;
+        var outsideRadius = 250;
         var textRadius = 160;
         //circulo central
-        var insideRadius = 100;
+        var insideRadius = 50;
 
         ctx = canvas.getContext("2d");
         ctx.clearRect(0,0,500,500);
