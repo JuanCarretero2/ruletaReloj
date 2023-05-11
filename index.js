@@ -1,164 +1,219 @@
-//CUSTOM "Roulette Wheel" BY jexus fox
-//https://codepen.io/jexusfox/pen/WgNpzN
+(function($) {
+    $.fn.extend({
 
-var options = [
-    "juan.acosta.7e6@itb.cat",
-    "mauro.arena.7e6@itb.cat",
-    "onur.aynali.7e6@itb.cat",
-    "oriol.barba.7e6@itb.cat",
-    "ruben.blas.7e6@itb.cat",
-    "juan.canyas.7e6@itb.cat",
-    "gerard.cano.7e6@itb.cat",
-    "juan.carretero.7e6@itb.cat",
-    "claudia.catot.7e6@itb.cat",
-    "samir.channagui.7e6@itb.cat",
-    "gerardo.chavarry.7e6@itb.cat",
-    "pablo.chmyr.7e6@itb.cat",
-    "younes.derraz.7e6@itb.cat",
-    "soulaimane.elharrak.7e6@itb.cat",
-    "hector.escribano.7e6@itb.cat",
-    "joel.fernandez.7e6@itb.cat",
-    "mario.garcia.7e6@itb.cat",
-    "jefrey.hernandez.7e6@itb.cat",
-    "kevin.herrera.7e6@itb.cat",
-    "denis.jimenez.7e6@itb.cat",
-    "erin.lorenzo.7e6@itb.cat",
-    "david.martinez.7e6@itb.cat",
-    "isaac.menendez.7e6@itb.cat",
-    "trishan.mizhquiri.7e6@itb.cat",
-    "victor.sempau.7e6@itb.cat",
-    "alfredo.sendra.7e3@itb.cat",
-    "daniel.shapoval.7e6@itb.cat",
-    "bogdan.stefurak.7e6@itb.cat",
-    "enric.toll.7e6@itb.cat",
-    "joan.villalba.7e6@itb.cat"
-];
+        roulette: function(options) {
 
-var startAngle = 0;
-var arc = Math.PI / (options.length / 2);
-var spinTimeout = null;
+            var defaults = {
+                angle: 0,
+                angleOffset: -45,
+                speed: 10000,
+                easing: "easeInOutElastic",
+            };
 
-var spinArcStart = 10;
-var spinTime = 0;
-var spinTimeTotal = 0;
+            var opt = $.extend(defaults, options);
 
-var ctx;
+            return this.each(function() {
+                var o = opt;
 
-document.getElementById("spin").addEventListener("click", spin);
+                var data = [
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'mauro.arena'
+                    },
 
-function byte2Hex(n) {
-    var nybHexString = "0123456789ABCDEF";
-    return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
-}
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'onur.aynali'
+                    },
 
-function RGB2Color(r,g,b) {
-    return '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b);
-}
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'oriol.barba'
+                    },
 
-function getColor(item, maxitem) {
-    var phase = 0;
-    var center = 128;
-    var width = 127;
-    var frequency = Math.PI*2/maxitem;
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'ruben.blas'
+                    },
 
-    red   = Math.sin(frequency*item+2+phase) * width + center;
-    green = Math.sin(frequency*item+0+phase) * width + center;
-    blue  = Math.sin(frequency*item+4+phase) * width + center;
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'gerard.cano'
+                    },
 
-    return RGB2Color(red,green,blue);
-}
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'juan.carretero'
+                    },
 
-function drawRouletteWheel() {
-    var canvas = document.getElementById("canvas");
-    if (canvas.getContext) {
-        var outsideRadius = 250;
-        var textRadius = 160;
-        //circulo central
-        var insideRadius = 50;
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'claudia.catot'
+                    },
 
-        ctx = canvas.getContext("2d");
-        ctx.clearRect(0,0,500,500);
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'samir.channagui'
+                    },
 
-        ctx.strokeStyle = "grey";
-        ctx.lineWidth = 1;
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'gerardo.chavarry'
+                    },
 
-        ctx.font = 'bold 12px Helvetica, Arial';
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'younes.derraz'
+                    },
 
-        for(var i = 0; i < options.length; i++) {
-            var angle = startAngle + i * arc;
-            //ctx.fillStyle = colors[i];
-            ctx.fillStyle = getColor(i, options.length);
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'soulaimane.elharrak'
+                    },
 
-            ctx.beginPath();
-            ctx.arc(250, 250, outsideRadius, angle, angle + arc, false);
-            ctx.arc(250, 250, insideRadius, angle + arc, angle, true);
-            ctx.stroke();
-            ctx.fill();
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'hector.escribano'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'joel.fernandez'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'mario.garcia'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'jefrey.hernandez'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'kevin.herrera'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'denis.jimenez'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'erin.lorenzo'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'david.martinez'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'isaac.menendez'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'victor.sempau'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'alfredo.sendra'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'daniel.shapoval'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'bogdan.stefurak'
+                    },
+                    {
+                        color: 'rgb(105, 105, 105)',
+                        text: 'joan.villalba'
+                    },
+                ];
 
-            ctx.save();
-            ctx.shadowOffsetX = -1;
-            ctx.shadowOffsetY = -1;
-            ctx.shadowBlur    = 15;
-            ctx.shadowColor   = "rgba(0,0,0,0.9)";
-            ctx.fillStyle = "white";
-            ctx.translate(250 + Math.cos(angle + arc / 2) * textRadius,
-                250 + Math.sin(angle + arc / 2) * textRadius);
-            ctx.rotate(angle + arc / 2 + Math.PI / 2);
-            var text = options[i];
-            ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
-            ctx.restore();
+                var $wrap = $(this);
+                var $btnStart = $wrap.find("#btn-start");
+                var $roulette = $wrap.find(".roulette");
+                var wrapW = $wrap.width();
+                var angle = o.angle;
+                var angleOffset = o.angleOffset;
+                var speed = o.speed;
+                var esing = o.easing;
+                var itemSize = data.length;
+                var itemSelector = "item";
+                var labelSelector = "label";
+                var d = 360 / itemSize;
+                var borderTopWidth = wrapW;
+                var borderRightWidth = tanDeg(d);
+
+                for (i = 1; i <= itemSize; i += 1) {
+                    var idx = i - 1;
+                    var rt = i * d + angleOffset;
+                    var itemHTML = $('<div class="' + itemSelector + '">');
+                    var labelHTML = '';
+                    labelHTML += '<p class="' + labelSelector + '">';
+                    labelHTML += '	<span class="text">' + data[idx].text + '<\/span>';
+                    labelHTML += '<\/p>';
+
+                    $roulette.append(itemHTML);
+                    $roulette.children("." + itemSelector).eq(idx).append(labelHTML);
+                    $roulette.children("." + itemSelector).eq(idx).css({
+                        "left": wrapW / 2,
+                        "top": -wrapW / 2,
+                        "border-top-width": borderTopWidth,
+                        "border-right-width": borderRightWidth,
+                        "border-top-color": data[idx].color,
+                        "transform": "rotate(" + rt + "deg)"
+                    });
+
+                    var textH = parseInt(((2 * Math.PI * wrapW) / d) * .11);
+
+                    $roulette.children("." + itemSelector).eq(idx).children("." + labelSelector).css({
+                        "height": textH + 'px',
+                        "line-height": textH + 'px',
+                        "transform": 'translateX(' + (textH * 1.03) + 'px) translateY(' + (wrapW * -.40) + 'px) rotateZ(' + (90 + d * .5) + 'deg)'
+                    });
+
+                }
+
+                function tanDeg(deg) {
+                    var rad = deg * Math.PI / 180;
+                    return wrapW / (1 / Math.tan(rad));
+                }
+
+
+                $btnStart.on("click", function() {
+                    rotation();
+                });
+
+                function rotation() {
+
+                    var completeA = 360 * r(5, 10) + r(0, 360);
+
+                    $roulette.rotate({
+                        angle: angle,
+                        animateTo: completeA,
+                        center: ["50%", "50%"],
+                        easing: $.easing.esing,
+                        callback: function() {
+                            var currentA = $(this).getRotateAngle();
+
+                            console.log(currentA);
+
+                        },
+                        duration: speed
+                    });
+                }
+
+                function r(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+            });
         }
+    });
+})(jQuery);
 
-        //Arrow
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.moveTo(250 - 4, 250 - (outsideRadius + 5));
-        ctx.lineTo(250 + 4, 250 - (outsideRadius + 5));
-        ctx.lineTo(250 + 4, 250 - (outsideRadius - 5));
-        ctx.lineTo(250 + 9, 250 - (outsideRadius - 5));
-        ctx.lineTo(250 + 0, 250 - (outsideRadius - 13));
-        ctx.lineTo(250 - 9, 250 - (outsideRadius - 5));
-        ctx.lineTo(250 - 4, 250 - (outsideRadius - 5));
-        ctx.lineTo(250 - 4, 250 - (outsideRadius + 5));
-        ctx.fill();
-    }
-}
+$(function() {
 
-function spin() {
-    spinAngleStart = Math.random() * 10 + 10;
-    spinTime = 0;
-    spinTimeTotal = Math.random() * 3 + 4 * 1000;
-    rotateWheel();
-}
+    $('.box-roulette').roulette();
 
-function rotateWheel() {
-    spinTime += 30;
-    if(spinTime >= spinTimeTotal) {
-        stopRotateWheel();
-        return;
-    }
-    var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
-    startAngle += (spinAngle * Math.PI / 180);
-    drawRouletteWheel();
-    spinTimeout = setTimeout('rotateWheel()', 30);
-}
-
-function stopRotateWheel() {
-    clearTimeout(spinTimeout);
-    var degrees = startAngle * 180 / Math.PI + 90;
-    var arcd = arc * 180 / Math.PI;
-    var index = Math.floor((360 - degrees % 360) / arcd);
-    ctx.save();
-    ctx.font = 'bold 30px Helvetica, Arial';
-    var text = options[index]
-    ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
-    ctx.restore();
-}
-
-function easeOut(t, b, c, d) {
-    var ts = (t/=d)*t;
-    var tc = ts*t;
-    return b+c*(tc + -3*ts + 3*t);
-}
-
-drawRouletteWheel();
+});
