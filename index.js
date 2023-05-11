@@ -179,6 +179,31 @@
                     return wrapW / (1 / Math.tan(rad));
                 }
 
+                var audioRotacion = document.getElementById('audioRotacion');
+                var audioFinal = document.getElementById('audioFinal');
+
+                function rotation() {
+                    var completeA = 360 * r(5, 10) + r(0, 360);
+
+                    audioRotacion.play();
+
+                    $roulette.rotate({
+                        angle: angle,
+                        animateTo: completeA,
+                        center: ["50%", "50%"],
+                        easing: $.easing.esing,
+                        callback: function() {
+                            var currentA = $(this).getRotateAngle();
+
+                            audioRotacion.pause();
+                            audioRotacion.currentTime = 0;
+                            audioFinal.play();
+
+                            console.log(currentA);
+                        },
+                        duration: speed
+                    });
+}
 
                 $btnStart.on("click", function() {
                     rotation();

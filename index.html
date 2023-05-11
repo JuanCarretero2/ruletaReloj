@@ -1,29 +1,46 @@
+<!DOCTYPE html>
 <html lang="en" >
 <head>
     <meta charset="UTF-8">
     <title>Ruleta</title>
-
-    <link rel="stylesheet" href="./index.css">
-
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
 
+    <p class="title">Ruleta Nombres De La Clase</p>
 
-<p class="title">Ruleta Nombres De La Clase</p>
+    <div class="box-roulette">
+        <div class="markers"></div>
+        <button type="button" id="btn-start">Girar</button>
+        <div class="roulette" id="roulette"></div>
+        <audio id="audioRotacion" src="sonido_rotacion.mp3"></audio>
+        <audio id="audioFinal" src="sonido_final.mp3"></audio>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js'></script>
+       <script src='https://cdn.sobekrepository.org/includes/jquery-rotate/2.2/jquery-rotate.min.js'></script>
+    </div>
 
-<div class="box-roulette">
-    <div class="markers"></div>
-    <button type="button" id="btn-start">
-        Spin
-    </button>
-    <div class="roulette" id="roulette"></div>
-</div>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js'></script>
-<script src='https://cdn.sobekrepository.org/includes/jquery-rotate/2.2/jquery-rotate.min.js'></script>
+    <div id="reollotge">
+        <p id="horaActual"></p>
+        <p id="tempsRestantDisplay"></p>
+        <input id="tempsFinal" type="time" placeholder="Hora de finalització (HH:MM)">
+        <input id="tempsRestantInput" type="text" placeholder="Durada (HH:MM:SS)">
+        <button onclick="comenca()">Comença</button>
+        <button onclick="reinicia()">Reinicia</button>
+        <select id="soFinal">
+          <option value="soFinal1.mp3">So Final 1</option>
+          <option value="soFinal2.mp3">So Final 2</option>
+        </select>
+        <select id="soFons">
+          <option value="soFons1.mp3">So Fons 1</option>
+          <option value="soFons2.mp3">So Fons 2</option>
+        </select>
+        <audio id="audio"></audio>
+        <audio id="audioFons"></audio>
+      </div>
 
-
-
-
-<script  src="./index.js"></script>
 </body>
+    <script  src="./index.js"></script>
+    <script src="script.js"></script>
 </html>
